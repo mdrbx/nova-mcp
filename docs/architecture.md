@@ -1,5 +1,7 @@
 # Architecture
 
+[← Back to the README](../README.md)
+
 Nova MCP adapts a bounded set of Nova HTTP operations to Laravel MCP tools. Nova
 remains responsible for resource queries, policies, field visibility, validation,
 and model changes. The adapter does not maintain a second CRUD implementation.
