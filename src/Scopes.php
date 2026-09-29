@@ -17,7 +17,7 @@ final class Scopes
     {
         return [
             self::READ => 'Read the Nova resources and fields available to your account.',
-            self::WRITE => 'Create, update and delete records where your Nova permissions allow it.',
+            self::WRITE => 'Modify records and relationships, restore or permanently delete records, and run synchronous actions where your Nova permissions allow it.',
             self::OFFLINE => 'Keep this connection active until it expires or you revoke it.',
         ];
     }

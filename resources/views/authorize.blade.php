@@ -12,7 +12,7 @@
                     <li><strong>{{ __($scope->description) }}</strong><code>{{ $scope->id }}</code></li>
                 @endforeach
             </ul>
-            <p>{{ __('Nova still checks your permissions on every request. Write access allows the client to create, update, and delete records you are authorized to manage.') }}</p>
+            <p>{{ __('Nova checks your permissions on every request. Write access includes record changes, relationships, restoration, permanent deletion, and synchronous actions. Server read-only mode blocks these operations.') }}</p>
             <p class="hint">{{ __('Only approve a client you trust. You can revoke access from MCP connections in Nova.') }}</p>
             <div class="actions">
                 <form method="post" action="{{ route('nova-mcp.oauth.deny') }}">

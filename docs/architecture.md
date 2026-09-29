@@ -46,11 +46,38 @@ callbacks can register resources and apply application behavior before catalog
 discovery. Catalog contents and write availability are evaluated for that user
 and the current scopes on every request.
 
+`nova-mcp.read_only` removes every mutation from the catalog and rejects writes
+again at dispatch time. Its default is false; Nova policies and the OAuth write
+scope continue to decide access. Existing write tokens cannot bypass read-only
+mode. `nova-mcp.guardrails` is appended to the protocol's server instructions,
+separately from the operation guide. The text is configurable through `.env` and
+Laravel's configuration cache. It guides clients but cannot enforce confirmation
+or data handling rules; permissions and read-only mode remain server checks.
+
 Each tool makes an internal JSON request through a cloned Laravel router. The
 operation determines an allowed method, Nova route, and controller; the adapter
 verifies that the matched route uses the expected controller. It rejects inputs
 that could override the method, resource, or relationship context. There is no
 arbitrary URL, controller, or Eloquent operation available to a client.
+
+Relationship targets come from an authorized, visible Nova field on a parent
+record available through its detail query and view policy. Clients supply a field
+attribute and, for attachment/detachment, one related ID. They cannot supply Nova's
+internal relationship routing parameters. The related resource must also satisfy
+the package allowlist/exclusions and Nova visibility. Native controllers apply
+relatable queries, pivot validation, add/attach/detach policies and callbacks.
+Undefined relationship policy methods keep Nova's documented defaults.
+
+Replication uses Nova's replication form followed by ordinary creation, matching
+Nova's own form workflow instead of copying raw model attributes. Restore and
+force-delete tools are offered only for soft-deletable resources.
+
+Resource actions are discovered through Nova and executed through its action
+controller with one selected ID. The adapter rejects `ShouldQueue` and standalone
+actions, while Nova retains `canSee`, `canRun`, `runAction`, destructive-action
+fallbacks, validation and action history. An application's synchronous action may
+still perform its own side effects, including dispatching its own jobs. The
+package does not override application business behavior or force jobs to run inline.
 
 The subrequest retains Nova's operation middleware and policy checks. Session,
 cookie, CSRF, and serving-event middleware already handled by the boundary are
@@ -82,6 +109,9 @@ values and pagination. Form and detail tools provide the corresponding metadata.
 Writes still trigger the application's normal Nova callbacks, model events, and
 other side effects. A ToolSearch batch runs sequentially and is not a database
 transaction: earlier successful writes remain committed if a later call fails.
+Nova can skip denied deletion/detachment operations or return an action `danger`
+message with HTTP 200. The adapter preserves these responses; a successful HTTP
+status alone does not prove that the requested change happened.
 
 The Nova Tool links to server-rendered Blade pages with package CSS. It requires
 no JavaScript component, frontend build, worker, or scheduler.
