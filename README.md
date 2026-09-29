@@ -1,11 +1,9 @@
-# Nova MCP
+# Nova MCP - Zero configuration connector
 
 Expose Laravel Nova resources to MCP clients through the same Nova operations,
 policies, field visibility, and validation used by your application.
 
-Users connect with OAuth and manage their connections from a Nova Tool. The tool
-renders Blade pages; the package has no JavaScript component or frontend build.
-Requests run synchronously. No queue worker, Horizon, or scheduler is required.
+Users connect with OAuth and manage their connections from a Nova Tool, using native Laravel MCP Oauth screen.
 
 ![Nova MCP connections page in the local demo](docs/images/nova-connections.png)
 
@@ -106,46 +104,6 @@ secret. Sign in with your Nova account and review the consent screen.
 For cloud clients, the server must be reachable from the client provider. Use
 HTTPS in production. A PHP development server and SQLite are sufficient for
 local package development, but `localhost` is not a remotely reachable address.
-
-### ChatGPT
-
-1. Enable Developer mode in ChatGPT settings, if permitted by your account or
-   workspace.
-2. Open **Plugins → Add → Create MCP app**, give the app a name, and enter the
-   complete MCP server URL from Nova.
-3. Choose **OAuth**. In the advanced OAuth settings, choose dynamic client
-   registration (DCR) and request `nova:read`. Add `nova:write` only if the client
-   should be able to create, update, and delete records; `offline_access` is
-   optional. Leave client credentials empty. Client ID Metadata Documents
-   (CIMD) are not supported.
-4. Create the app, sign in to Nova, and approve the requested access.
-5. Select the app in a conversation and ask it to find a resource using
-   `search_tools`, then execute the relevant tool.
-
-Account permissions and interface labels vary. Follow the current
-[OpenAI Developer mode guide](https://developers.openai.com/api/docs/guides/developer-mode)
-for your account. This package exposes MCP tools, not a ChatGPT widget.
-
-Video: [connect a remote MCP server with OAuth in ChatGPT (16:57)](https://www.youtube.com/watch?v=XEMZniYKuaY&t=1017s),
-from Shaw Talebi's *How to Build a Remote MCP Server (with Auth)* (November 2025).
-The tutorial uses another MCP server; use Nova's URL and scopes. Client menu
-labels may have changed since it was recorded.
-
-### Claude Desktop
-
-1. Open **Customize → Connectors**.
-2. Choose **+ → Add custom connector** and enter the URL from Nova.
-3. Add the connector, select **Connect**, and authorize it with your Nova account.
-4. Enable the connector for the conversation.
-
-Team and Enterprise workspaces may require an owner to add the connector first.
-Claude's remote connectors use Anthropic's servers, including when configured
-from Claude Desktop; they cannot reach a local PHP server directly. See
-[Claude's custom connector guide](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
-
-Video: [connect the remote MCP server to Claude (20:23)](https://www.youtube.com/watch?v=XEMZniYKuaY&t=1223s).
-This is the Claude chapter of the same November 2025 tutorial; client menu labels
-may have changed.
 
 ## Permissions
 
