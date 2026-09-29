@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source:
+    name: Public source checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+      - name: Validate package metadata
+        run: composer validate --strict --no-check-lock
+      - name: Check PHP syntax
+        run: git ls-files -z -- '*.php' | xargs -0 -r -n 1 php -l
+      - name: Explain fork coverage
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: echo '::notice::Nova integration, PHPStan, Rector, and Pint require licensed dependencies. They are skipped for fork pull requests; a maintainer must run them on a reviewed trusted branch before merging.'
+
+  package:
+    name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
+    # Never expose the Nova license to code submitted from a fork.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.3'
+            laravel: '^12.41.1'
+            testbench: '^10.8'
+          - php: '8.3'
+            laravel: '^13.0'
+            testbench: '^11.0'
+          - php: '8.4'
+            laravel: '^13.0'
+            testbench: '^11.0'
+            quality: true
+          - php: '8.5'
+            laravel: '^13.0'
+            testbench: '^11.0'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo_sqlite, dom, fileinfo
+          tools: composer:v2
+          coverage: none
+      - name: Install licensed dependencies
+        env:
+          NOVA_USERNAME: ${{ secrets.NOVA_USERNAME }}
+          NOVA_LICENSE_KEY: ${{ secrets.NOVA_LICENSE_KEY }}
+        run: |
+          if [ -z "$NOVA_USERNAME" ] || [ -z "$NOVA_LICENSE_KEY" ]; then
+            echo '::error::Configure NOVA_USERNAME and NOVA_LICENSE_KEY repository secrets to run the licensed package checks.'
+            exit 1
+          fi
+          export COMPOSER_AUTH="$(php -r 'echo json_encode(["http-basic" => ["nova.laravel.com" => ["username" => getenv("NOVA_USERNAME"), "password" => getenv("NOVA_LICENSE_KEY")]]], JSON_THROW_ON_ERROR);')"
+          composer require --dev --no-update --no-interaction "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}"
+          composer update --prefer-dist --no-progress --no-interaction --with-all-dependencies
+      - name: Test with SQLite
+        run: composer test
+      - name: Check formatting
+        if: matrix.quality
+        run: composer format:check
+      - name: Check Rector
+        if: matrix.quality
+        run: composer refactor:check
+      - name: Analyse at PHPStan level 6
+        if: matrix.quality
+        run: composer analyse

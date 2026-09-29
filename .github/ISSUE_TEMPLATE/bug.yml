@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible problem with Nova MCP.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For security vulnerabilities, follow SECURITY.md instead of posting details here.
+        Remove tokens, license keys, customer data, and private URLs from your report.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Nova MCP, PHP, Laravel, Nova, Laravel MCP, and Passport.
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      description: Client name and version, if known.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Minimal steps and sample Nova resource or policy, when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Sanitized error messages or failing test output.
+      render: text

@@ -1,0 +1,119 @@
+{
+    "name": "mdrbx/nova-mcp",
+    "description": "Expose Laravel Nova resources to MCP clients through Nova's existing permissions and OAuth.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "nova",
+        "mcp",
+        "oauth",
+        "tool-search"
+    ],
+    "homepage": "https://github.com/mdrbx/nova-mcp",
+    "authors": [
+        {
+            "name": "Matthieu Deroubaix",
+            "homepage": "https://github.com/mdrbx",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/mdrbx/nova-mcp/issues",
+        "source": "https://github.com/mdrbx/nova-mcp"
+    },
+    "require": {
+        "php": "^8.3",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "illuminate/auth": "^12.41.1 || ^13.0",
+        "illuminate/console": "^12.41.1 || ^13.0",
+        "illuminate/database": "^12.41.1 || ^13.0",
+        "illuminate/support": "^12.41.1 || ^13.0",
+        "laravel/mcp": "^1.0.1",
+        "laravel/nova": "^5.11",
+        "laravel/passport": "^13.8"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.12",
+        "laravel/pint": "^1.29",
+        "orchestra/testbench": "^10.8 || ^11.0",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^11.5 || ^12.0",
+        "rector/rector": "^2.6",
+        "driftingly/rector-laravel": "^2.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mdrbx\\NovaMcp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mdrbx\\NovaMcp\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "format": "pint",
+        "format:check": "pint --test",
+        "refactor": "rector process",
+        "refactor:check": "rector process --dry-run",
+        "check": [
+            "@format:check",
+            "@refactor:check",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mdrbx\\NovaMcp\\NovaMcpServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "archive": {
+        "exclude": [
+            "/vendor",
+            "/node_modules",
+            "/auth.json",
+            "/composer.lock",
+            "/.env",
+            "/.env.*",
+            "*.key",
+            "*.pem",
+            "*.sqlite",
+            "*.sqlite-*",
+            "*.log",
+            "/.phpunit.cache",
+            "/.phpunit.result.cache",
+            "/.phpstan-cache",
+            "/.rector-cache",
+            "/.php-cs-fixer.cache",
+            "/.idea",
+            "/.vscode",
+            "/coverage",
+            "/build",
+            "/workbench"
+        ]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://nova.laravel.com"
+        }
+    ]
+}

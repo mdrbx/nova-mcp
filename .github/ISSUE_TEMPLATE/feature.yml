@@ -1,0 +1,17 @@
+name: Feature request
+description: Describe a use case that the current package does not cover.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Use case
+      description: What are you trying to do, and what prevents it today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include an example and relevant Nova or MCP behavior.
+    validations:
+      required: true

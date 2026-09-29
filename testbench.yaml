@@ -1,0 +1,19 @@
+providers:
+  - Inertia\ServiceProvider
+  - Laravel\Passport\PassportServiceProvider
+  - Laravel\Mcp\Server\McpServiceProvider
+  - Laravel\Nova\NovaCoreServiceProvider
+  - Mdrbx\NovaMcp\Tests\Fixtures\WorkbenchServiceProvider
+  - Mdrbx\NovaMcp\Tests\Fixtures\NovaServiceProvider
+  - Mdrbx\NovaMcp\NovaMcpServiceProvider
+
+workbench:
+  start: /nova-mcp/connections
+  install: false
+  welcome: false
+  discovers:
+    web: true
+    commands: true
+    components: false
+    views: true
+  build: []
