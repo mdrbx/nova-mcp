@@ -19,6 +19,20 @@ Users connect with their Nova account over OAuth and manage access from
   and the client's approved OAuth scopes.
 - 🪶 **Keep setup light.** Blade pages, no frontend build, worker or scheduler required.
 
+## 🧪 Try the live demo
+
+Explore **[the Nova MCP playground](https://nova-mcp.mdrbx.com)** with fictional
+clients, projects and tasks. Sign in with `demo@example.com` / `NovaDemo2026!`
+and complete the reCAPTCHA check.
+
+Connect your MCP client with OAuth at **`https://nova-mcp.mdrbx.com/nova-mcp`**.
+The demo is configured for Claude.ai and ChatGPT OAuth callbacks; other clients
+need their callback URL added by the operator.
+
+> This is a shared, public workspace. Do not enter personal or confidential data.
+> All changes, browser sessions and MCP connections reset every six hours:
+> **00:00, 06:00, 12:00 and 18:00 UTC**. Reconnect your client after a reset.
+
 ## 🚀 Quick start
 
 Start in an application with **PHP 8.3+, Laravel 12.41.1+ or 13.x, and Nova 5.11+**.
