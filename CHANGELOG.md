@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 2026-09-29
 
 - Expose registered Nova resources through Laravel MCP's searchable tool catalog.
 - Reuse Nova's HTTP operations, policies, field visibility, and validation.

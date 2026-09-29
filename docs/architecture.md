@@ -60,9 +60,11 @@ use token authentication rather than CSRF; browser consent and connection
 management retain session authentication and CSRF protection.
 
 The adapter restores request, route, router, guard, user resolver, locale, and
-model strictness state after dispatch, including failures. This matters when
-several operations run in one MCP request or the application handles subsequent
-requests in the same process.
+model strictness state after dispatch, including failures. The bearer boundary
+also restores locale and model strictness when Nova access or Tool authorization
+fails before any operation runs; Nova's serving middleware otherwise skips its
+cleanup on exceptions. This matters when several operations run in one MCP
+request or the application handles subsequent requests in the same process.
 
 ## Responses and side effects
 

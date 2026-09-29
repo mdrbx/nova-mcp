@@ -1,9 +1,7 @@
 # Security
 
-Report vulnerabilities privately through **Security → Report a vulnerability**
-on the `mdrbx/nova-mcp` GitHub repository when private reporting is enabled.
-If that option is unavailable, open an issue asking the maintainer for a private
-reporting channel, without publishing the vulnerability or exploit details.
+Report vulnerabilities through [GitHub's private vulnerability reporting](https://github.com/mdrbx/nova-mcp/security/advisories/new).
+Do not publish vulnerability details or exploits in a public issue.
 
 Include affected versions, a minimal reproduction using sample data, the
 permissions of the affected user, and the expected and actual behavior.

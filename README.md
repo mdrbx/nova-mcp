@@ -9,6 +9,8 @@ Requests run synchronously. No queue worker, Horizon, or scheduler is required.
 
 ![Nova MCP connections page in the local demo](docs/images/nova-connections.png)
 
+Captured from the running local demo with PHP's development server and SQLite.
+
 ## Requirements
 
 | Dependency | Version |
@@ -30,6 +32,14 @@ In an application where Nova is already installed:
 ```bash
 composer require mdrbx/nova-mcp
 php artisan nova-mcp:install
+```
+
+Before migrating, check your user ID type. Passport's published `user_id` columns
+default to unsigned big integers. For UUID or ULID users, adapt those columns to
+the application's identifier type before running the migrations. Existing
+Passport installations should retain their compatible schema.
+
+```bash
 php artisan migrate
 ```
 
@@ -116,6 +126,11 @@ Account permissions and interface labels vary. Follow the current
 [OpenAI Developer mode guide](https://developers.openai.com/api/docs/guides/developer-mode)
 for your account. This package exposes MCP tools, not a ChatGPT widget.
 
+Video: [connect a remote MCP server with OAuth in ChatGPT (16:57)](https://www.youtube.com/watch?v=XEMZniYKuaY&t=1017s),
+from Shaw Talebi's *How to Build a Remote MCP Server (with Auth)* (November 2025).
+The tutorial uses another MCP server; use Nova's URL and scopes. Client menu
+labels may have changed since it was recorded.
+
 ### Claude Desktop
 
 1. Open **Customize → Connectors**.
@@ -128,6 +143,10 @@ Claude's remote connectors use Anthropic's servers, including when configured
 from Claude Desktop; they cannot reach a local PHP server directly. See
 [Claude's custom connector guide](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
 
+Video: [connect the remote MCP server to Claude (20:23)](https://www.youtube.com/watch?v=XEMZniYKuaY&t=1223s).
+This is the Claude chapter of the same November 2025 tutorial; client menu labels
+may have changed.
+
 ## Permissions
 
 | Scope | Access |
@@ -139,6 +158,11 @@ from Claude Desktop; they cannot reach a local PHP server directly. See
 The authentication challenge requests read access by default. Write access must
 be requested and approved explicitly; a write scope never overrides Nova
 policies. Refresh and access tokens can be revoked from **MCP connections**.
+
+![Nova MCP consent screen requesting read, write, and offline access](docs/images/oauth-consent.png)
+
+Consent screen from the running local demo. This example requests all three
+scopes; a client that only needs to read resources should request `nova:read`.
 
 Resource policies, query restrictions, hidden fields, validation rules, model
 events, and resource callbacks keep their application behavior. Hooks may send

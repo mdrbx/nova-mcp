@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Mdrbx\NovaMcp\Tests\Feature;
 
 use DateTimeImmutable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Laravel\Nova\Nova;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Lcobucci\JWT\Configuration;
@@ -130,6 +132,31 @@ class OAuthTest extends TestCase
         auth()->forgetGuards();
 
         $this->rpc('tools/list', token: $token['access_token'])->assertForbidden();
+    }
+
+    #[DataProvider('deniedBoundaryAccess')]
+    public function test_a_denied_bearer_request_restores_model_strictness_and_locale(array $changes): void
+    {
+        $user = $this->user();
+        $token = $this->oauthToken($user);
+        $user->update($changes);
+        Nova::serving(fn () => app()->setLocale('fr'));
+        Model::preventAccessingMissingAttributes();
+
+        $this->rpc('tools/list', token: $token['access_token'])->assertForbidden();
+
+        $this->assertSame(
+            ['strict' => true, 'locale' => 'en'],
+            ['strict' => Model::preventsAccessingMissingAttributes(), 'locale' => app()->getLocale()],
+        );
+    }
+
+    public static function deniedBoundaryAccess(): array
+    {
+        return [
+            'Nova access removed' => [['can_use_nova' => false]],
+            'Tool hidden' => [['email' => 'tool-denied@example.test']],
+        ];
     }
 
     public function test_unregistered_host_oauth_clients_cannot_use_package_authorization(): void

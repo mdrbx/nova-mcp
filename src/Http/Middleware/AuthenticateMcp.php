@@ -7,6 +7,7 @@ namespace Mdrbx\NovaMcp\Http\Middleware;
 use Closure;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -88,6 +89,8 @@ class AuthenticateMcp
         $previousRequestResolver = $request->getUserResolver();
         $previousScopes = $request->attributes->get('nova-mcp.scopes');
         $cookies = $request->cookies->all();
+        $locale = app()->getLocale();
+        $preventsMissingAttributes = Model::preventsAccessingMissingAttributes();
 
         try {
             // Bearer requests must not inherit a browser's unrelated session identity.
@@ -113,6 +116,9 @@ class AuthenticateMcp
 
             return $response;
         } finally {
+            // Nova's serving middleware skips its cleanup when a later authorization check throws.
+            Model::preventAccessingMissingAttributes($preventsMissingAttributes);
+            app()->setLocale($locale);
             $previousUser === null ? $guard->forgetUser() : $guard->setUser($previousUser);
             $this->auth->setDefaultDriver($previousDriver);
             $this->auth->resolveUsersUsing($previousResolver);
