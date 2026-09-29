@@ -31,14 +31,22 @@ jobs:
         run: composer validate --strict --no-check-lock
       - name: Check PHP syntax
         run: git ls-files -z -- '*.php' | xargs -0 -r -n 1 php -l
-      - name: Explain fork coverage
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
-        run: echo '::notice::Nova integration, PHPStan, Rector, and Pint require licensed dependencies. They are skipped for fork pull requests; a maintainer must run them on a reviewed trusted branch before merging.'
+      - name: Explain restricted coverage
+        if: >-
+          github.actor == 'dependabot[bot]' ||
+          (github.event_name == 'pull_request' &&
+          (github.event.pull_request.head.repo.full_name != github.repository ||
+          github.event.pull_request.user.login == 'dependabot[bot]'))
+        run: echo '::notice::Nova integration, PHPStan, Rector, and Pint require licensed dependencies. Fork pull requests and Dependabot runs skip these checks because Nova Actions secrets are unavailable. A maintainer must run them on a reviewed trusted branch before merging.'
 
   package:
     name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
-    # Never expose the Nova license to code submitted from a fork.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # Forks and Dependabot cannot use the Nova Actions secrets, even for same-repository bot branches.
+    if: >-
+      github.actor != 'dependabot[bot]' &&
+      (github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:

@@ -54,11 +54,14 @@ PHPStan, Rector, and Pint require the licensed Nova dependency. Repository
 maintainers configure `NOVA_USERNAME` and `NOVA_LICENSE_KEY` as GitHub Actions
 secrets for those jobs.
 
-Fork pull requests do not receive these credentials, and licensed jobs are
-explicitly skipped. A maintainer must review the changes and run the complete
-checks on a trusted branch before merging. A passing public-source job alone
-does not establish package compatibility. Never switch this workflow to
-`pull_request_target` while checking out or executing untrusted PR code.
+Fork pull requests and Dependabot runs do not receive these Actions credentials.
+Dependabot uses a separate secret store, even when its branch belongs to this
+repository. The workflow skips licensed jobs for both cases and explains the
+reduced coverage in the public-source job. A maintainer must review the changes
+and run the complete checks on a trusted branch before merging. A passing
+public-source job alone does not establish package compatibility. Never switch
+this workflow to `pull_request_target` while checking out or executing untrusted
+PR code. See [GitHub's Dependabot restrictions](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-on-actions).
 
 The configured matrix covers Laravel 12 and 13 with their matching Testbench
 versions. A CI configuration is not evidence that a particular run passed; check
